@@ -9,8 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitiosRouteImport } from './routes/sitios'
+import { Route as CargaRouteImport } from './routes/carga'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SitiosRoute = SitiosRouteImport.update({
+  id: '/sitios',
+  path: '/sitios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CargaRoute = CargaRouteImport.update({
+  id: '/carga',
+  path: '/carga',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +31,50 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/carga': typeof CargaRoute
+  '/sitios': typeof SitiosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/carga': typeof CargaRoute
+  '/sitios': typeof SitiosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/carga': typeof CargaRoute
+  '/sitios': typeof SitiosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/carga' | '/sitios'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/carga' | '/sitios'
+  id: '__root__' | '/' | '/carga' | '/sitios'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CargaRoute: typeof CargaRoute
+  SitiosRoute: typeof SitiosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitios': {
+      id: '/sitios'
+      path: '/sitios'
+      fullPath: '/sitios'
+      preLoaderRoute: typeof SitiosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carga': {
+      id: '/carga'
+      path: '/carga'
+      fullPath: '/carga'
+      preLoaderRoute: typeof CargaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,7 +87,19 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CargaRoute: CargaRoute,
+  SitiosRoute: SitiosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
