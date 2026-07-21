@@ -14,7 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      devices: {
+        Row: {
+          created_at: string
+          id: string
+          ip: string
+          last_seen: string | null
+          latency_ms: number | null
+          notes: string | null
+          site: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip: string
+          last_seen?: string | null
+          latency_ms?: number | null
+          notes?: string | null
+          site: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip?: string
+          last_seen?: string | null
+          latency_ms?: number | null
+          notes?: string | null
+          site?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
