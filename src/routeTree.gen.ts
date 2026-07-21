@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitiosRouteImport } from './routes/sitios'
 import { Route as CargaRouteImport } from './routes/carga'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicDevicesUpsertRouteImport } from './routes/api/public/devices/upsert'
 
 const SitiosRoute = SitiosRouteImport.update({
   id: '/sitios',
@@ -28,35 +29,44 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDevicesUpsertRoute = ApiPublicDevicesUpsertRouteImport.update({
+  id: '/api/public/devices/upsert',
+  path: '/api/public/devices/upsert',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/carga': typeof CargaRoute
   '/sitios': typeof SitiosRoute
+  '/api/public/devices/upsert': typeof ApiPublicDevicesUpsertRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/carga': typeof CargaRoute
   '/sitios': typeof SitiosRoute
+  '/api/public/devices/upsert': typeof ApiPublicDevicesUpsertRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/carga': typeof CargaRoute
   '/sitios': typeof SitiosRoute
+  '/api/public/devices/upsert': typeof ApiPublicDevicesUpsertRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/carga' | '/sitios'
+  fullPaths: '/' | '/carga' | '/sitios' | '/api/public/devices/upsert'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/carga' | '/sitios'
-  id: '__root__' | '/' | '/carga' | '/sitios'
+  to: '/' | '/carga' | '/sitios' | '/api/public/devices/upsert'
+  id: '__root__' | '/' | '/carga' | '/sitios' | '/api/public/devices/upsert'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CargaRoute: typeof CargaRoute
   SitiosRoute: typeof SitiosRoute
+  ApiPublicDevicesUpsertRoute: typeof ApiPublicDevicesUpsertRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/devices/upsert': {
+      id: '/api/public/devices/upsert'
+      path: '/api/public/devices/upsert'
+      fullPath: '/api/public/devices/upsert'
+      preLoaderRoute: typeof ApiPublicDevicesUpsertRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,17 +106,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CargaRoute: CargaRoute,
   SitiosRoute: SitiosRoute,
+  ApiPublicDevicesUpsertRoute: ApiPublicDevicesUpsertRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
