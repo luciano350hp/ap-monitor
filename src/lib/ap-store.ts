@@ -13,6 +13,7 @@ export interface AP {
 }
 
 const STORAGE_KEY = "ap-down-monitor:aps";
+const EMPTY_APS: AP[] = [];
 
 let cache: AP[] = [];
 const listeners = new Set<() => void>();
@@ -47,7 +48,7 @@ export const apStore = {
     return cache;
   },
   getServerSnapshot(): AP[] {
-    return [];
+    return EMPTY_APS;
   },
   setAll(aps: AP[]) {
     cache = aps;
