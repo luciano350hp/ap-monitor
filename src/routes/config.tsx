@@ -20,10 +20,10 @@ function ConfigPage() {
   const [unknownMin, setUnknownMin] = useState(thresholds.unknownAfterMinutes);
   const [saved, setSaved] = useState(false);
 
-  const webhookUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/api/public/devices/upsert`
-      : "/api/public/devices/upsert";
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const webhookUrl = `${origin}/api/public/devices/upsert`;
+  const listUrl = `${origin}/api/public/devices/list`;
+
 
   function save() {
     setThresholds({ degradedLatencyMs: degraded, unknownAfterMinutes: unknownMin });
