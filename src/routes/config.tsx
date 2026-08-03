@@ -20,10 +20,10 @@ function ConfigPage() {
   const [unknownMin, setUnknownMin] = useState(thresholds.unknownAfterMinutes);
   const [saved, setSaved] = useState(false);
 
-  const webhookUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/api/public/devices/upsert`
-      : "/api/public/devices/upsert";
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const webhookUrl = `${origin}/api/public/devices/upsert`;
+  const listUrl = `${origin}/api/public/devices/list`;
+
 
   function save() {
     setThresholds({ degradedLatencyMs: degraded, unknownAfterMinutes: unknownMin });
@@ -109,6 +109,26 @@ function ConfigPage() {
           Clave única: <code>ip</code>. Estados aceptados: <code>up</code>, <code>down</code>, <code>degraded</code>, <code>unknown</code>.
         </p>
       </section>
+
+      <section className="rounded border border-slate-200 bg-white p-5 space-y-3">
+        <h2 className="text-sm font-semibold text-slate-800">Lectura por API (GET)</h2>
+        <p className="text-xs text-slate-500">
+          Devuelve los dispositivos en JSON. Misma autenticación por header
+          <code className="mx-1 rounded bg-slate-100 px-1">x-webhook-secret</code>.
+          Filtros opcionales: <code>site</code>, <code>status</code>, <code>ip</code>, <code>limit</code> (1–1000, default 200).
+        </p>
+        <div className="rounded bg-slate-900 text-slate-100 p-3 text-xs font-mono overflow-x-auto">
+          GET {listUrl}
+        </div>
+        <div className="rounded bg-slate-900 text-slate-100 p-3 text-xs font-mono overflow-x-auto whitespace-pre">
+{`curl '${listUrl}?status=down&limit=50' \\
+  -H 'x-webhook-secret: <DEVICE_WEBHOOK_SECRET>'`}
+        </div>
+        <p className="text-xs text-slate-500">
+          Respuesta: <code>{`{ ok: true, count: N, devices: [...] }`}</code>
+        </p>
+      </section>
+
     </div>
   );
 }
