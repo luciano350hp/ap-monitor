@@ -16,6 +16,7 @@ import { Route as CargaRouteImport } from './routes/carga'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DevicesIdRouteImport } from './routes/devices.$id'
 import { Route as ApiPublicDevicesUpsertRouteImport } from './routes/api/public/devices/upsert'
+import { Route as ApiPublicDevicesListRouteImport } from './routes/api/public/devices/list'
 
 const SitiosRoute = SitiosRouteImport.update({
   id: '/sitios',
@@ -52,6 +53,11 @@ const ApiPublicDevicesUpsertRoute = ApiPublicDevicesUpsertRouteImport.update({
   path: '/api/public/devices/upsert',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDevicesListRoute = ApiPublicDevicesListRouteImport.update({
+  id: '/api/public/devices/list',
+  path: '/api/public/devices/list',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/sitios': typeof SitiosRoute
   '/devices/$id': typeof DevicesIdRoute
+  '/api/public/devices/list': typeof ApiPublicDevicesListRoute
   '/api/public/devices/upsert': typeof ApiPublicDevicesUpsertRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/sitios': typeof SitiosRoute
   '/devices/$id': typeof DevicesIdRoute
+  '/api/public/devices/list': typeof ApiPublicDevicesListRoute
   '/api/public/devices/upsert': typeof ApiPublicDevicesUpsertRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/sitios': typeof SitiosRoute
   '/devices/$id': typeof DevicesIdRoute
+  '/api/public/devices/list': typeof ApiPublicDevicesListRoute
   '/api/public/devices/upsert': typeof ApiPublicDevicesUpsertRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/sitios'
     | '/devices/$id'
+    | '/api/public/devices/list'
     | '/api/public/devices/upsert'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/sitios'
     | '/devices/$id'
+    | '/api/public/devices/list'
     | '/api/public/devices/upsert'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/sitios'
     | '/devices/$id'
+    | '/api/public/devices/list'
     | '/api/public/devices/upsert'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   SitiosRoute: typeof SitiosRoute
   DevicesIdRoute: typeof DevicesIdRoute
+  ApiPublicDevicesListRoute: typeof ApiPublicDevicesListRoute
   ApiPublicDevicesUpsertRoute: typeof ApiPublicDevicesUpsertRoute
 }
 
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDevicesUpsertRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/devices/list': {
+      id: '/api/public/devices/list'
+      path: '/api/public/devices/list'
+      fullPath: '/api/public/devices/list'
+      preLoaderRoute: typeof ApiPublicDevicesListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   SitiosRoute: SitiosRoute,
   DevicesIdRoute: DevicesIdRoute,
+  ApiPublicDevicesListRoute: ApiPublicDevicesListRoute,
   ApiPublicDevicesUpsertRoute: ApiPublicDevicesUpsertRoute,
 }
 export const routeTree = rootRouteImport
