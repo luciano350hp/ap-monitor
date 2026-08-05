@@ -64,6 +64,7 @@ function DashboardPage() {
             <tr>
               <th className="text-left px-4 py-2">Estado</th>
               <th className="text-left px-4 py-2">IP</th>
+              <th className="text-left px-4 py-2">AP</th>
               <th className="text-left px-4 py-2">Sitio</th>
               <th className="text-left px-4 py-2">Último contacto</th>
               <th className="text-right px-4 py-2">Latencia</th>
@@ -73,13 +74,13 @@ function DashboardPage() {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {loading && (
-              <tr><td colSpan={7} className="px-4 py-6 text-center text-slate-500">Cargando…</td></tr>
+              <tr><td colSpan={8} className="px-4 py-6 text-center text-slate-500">Cargando…</td></tr>
             )}
             {error && (
-              <tr><td colSpan={7} className="px-4 py-6 text-center text-red-600">{error}</td></tr>
+              <tr><td colSpan={8} className="px-4 py-6 text-center text-red-600">{error}</td></tr>
             )}
             {!loading && !error && sorted.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-6 text-center text-slate-500">Sin dispositivos.</td></tr>
+              <tr><td colSpan={8} className="px-4 py-6 text-center text-slate-500">Sin dispositivos.</td></tr>
             )}
             {sorted.map((d) => (
               <tr key={d.id} className={d.effective === "down" ? "bg-red-50/60" : d.effective === "degraded" ? "bg-amber-50/40" : ""}>
@@ -89,6 +90,7 @@ function DashboardPage() {
                     {d.ip}
                   </Link>
                 </td>
+                <td className="px-4 py-2 text-slate-700">{d.ap_name ?? "—"}</td>
                 <td className="px-4 py-2 text-slate-700">{d.site}</td>
                 <td className="px-4 py-2 text-slate-600">{d.last_seen ? formatRelative(d.last_seen) : "—"}</td>
                 <td className="px-4 py-2 text-right font-mono text-xs text-slate-700">{d.latency_ms != null ? `${d.latency_ms} ms` : "—"}</td>

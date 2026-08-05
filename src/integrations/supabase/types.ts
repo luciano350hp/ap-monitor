@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       devices: {
         Row: {
+          ap_name: string | null
           created_at: string
           id: string
           ip: string
@@ -27,6 +28,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          ap_name?: string | null
           created_at?: string
           id?: string
           ip: string
@@ -38,6 +40,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          ap_name?: string | null
           created_at?: string
           id?: string
           ip?: string

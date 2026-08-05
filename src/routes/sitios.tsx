@@ -1,8 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { useAPs, type AP } from "@/lib/ap-store";
+import { deriveStatus, useDevices, useThresholds } from "@/lib/devices";
 
 export const Route = createFileRoute("/sitios")({
+  head: () => ({
+    meta: [
+      { title: "Resumen por Sitio — AP Down Monitor" },
+      { name: "description", content: "Dispositivos agrupados por sitio con cantidad de caídos y disponibilidad." },
+      { property: "og:title", content: "Resumen por Sitio — AP Down Monitor" },
+      { property: "og:description", content: "Dispositivos agrupados por sitio con cantidad de caídos y disponibilidad." },
+    ],
+  }),
   component: SiteSummaryPage,
 });
 
@@ -11,35 +19,39 @@ interface SiteRow {
   total: number;
   down: number;
   up: number;
+  degraded: number;
   unknown: number;
-  aps: AP[];
 }
 
 function SiteSummaryPage() {
-  const aps = useAPs();
+  const { devices, loading, error } = useDevices();
+  const [thresholds] = useThresholds();
 
   const rows: SiteRow[] = useMemo(() => {
     const map = new Map<string, SiteRow>();
-    for (const ap of aps) {
-      const row = map.get(ap.site) ?? { site: ap.site, total: 0, down: 0, up: 0, unknown: 0, aps: [] };
+    for (const d of devices) {
+      const row = map.get(d.site) ?? { site: d.site, total: 0, down: 0, up: 0, degraded: 0, unknown: 0 };
       row.total++;
-      row[ap.status]++;
-      row.aps.push(ap);
-      map.set(ap.site, row);
+      row[deriveStatus(d, thresholds)]++;
+      map.set(d.site, row);
     }
     return Array.from(map.values()).sort((a, b) => b.down - a.down || a.site.localeCompare(b.site));
-  }, [aps]);
+  }, [devices, thresholds]);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-slate-900">Resumen por Sitio</h1>
-        <p className="text-sm text-slate-500">APs agrupados por ubicación, ordenados por cantidad de caídos.</p>
+        <p className="text-sm text-slate-500">Dispositivos agrupados por ubicación, ordenados por cantidad de caídos.</p>
       </div>
 
-      {rows.length === 0 ? (
+      {error && <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+
+      {loading ? (
+        <div className="rounded border border-slate-200 bg-white p-12 text-center text-sm text-slate-500">Cargando…</div>
+      ) : rows.length === 0 ? (
         <div className="rounded border border-dashed border-slate-300 bg-white p-12 text-center">
-          <p className="text-sm text-slate-600">No hay datos cargados.</p>
+          <p className="text-sm text-slate-600">No hay dispositivos registrados.</p>
           <Link
             to="/carga"
             className="mt-3 inline-flex items-center justify-center rounded bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-800"
@@ -55,8 +67,9 @@ function SiteSummaryPage() {
                 <th className="px-4 py-2.5 font-medium">Sitio</th>
                 <th className="px-4 py-2.5 font-medium text-right">Total</th>
                 <th className="px-4 py-2.5 font-medium text-right">Caídos</th>
-                <th className="px-4 py-2.5 font-medium text-right">Activos</th>
-                <th className="px-4 py-2.5 font-medium text-right">Desconocidos</th>
+                <th className="px-4 py-2.5 font-medium text-right">Degradados</th>
+                <th className="px-4 py-2.5 font-medium text-right">Operativos</th>
+                <th className="px-4 py-2.5 font-medium text-right">Sin datos</th>
                 <th className="px-4 py-2.5 font-medium">Disponibilidad</th>
               </tr>
             </thead>
@@ -68,10 +81,9 @@ function SiteSummaryPage() {
                     <td className="px-4 py-3 font-medium text-slate-900">{r.site}</td>
                     <td className="px-4 py-3 text-right tabular-nums text-slate-700">{r.total}</td>
                     <td className="px-4 py-3 text-right tabular-nums">
-                      <span className={r.down > 0 ? "font-semibold text-red-600" : "text-slate-400"}>
-                        {r.down}
-                      </span>
+                      <span className={r.down > 0 ? "font-semibold text-red-600" : "text-slate-400"}>{r.down}</span>
                     </td>
+                    <td className="px-4 py-3 text-right tabular-nums text-amber-700">{r.degraded}</td>
                     <td className="px-4 py-3 text-right tabular-nums text-emerald-700">{r.up}</td>
                     <td className="px-4 py-3 text-right tabular-nums text-slate-500">{r.unknown}</td>
                     <td className="px-4 py-3">

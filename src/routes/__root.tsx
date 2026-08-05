@@ -135,7 +135,6 @@ function RootComponent() {
               </div>
               <nav className="flex items-center h-14">
                 <NavLink to="/dashboard" label="Dashboard" />
-                <NavLink to="/" label="Estado de APs" />
                 <NavLink to="/sitios" label="Resumen por Sitio" />
                 <NavLink to="/carga" label="Carga de Datos" />
                 <NavLink to="/config" label="Configuración" />

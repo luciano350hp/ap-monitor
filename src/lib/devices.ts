@@ -6,7 +6,9 @@ export type DeviceStatusRaw = "up" | "down" | "degraded" | "unknown";
 export interface Device {
   id: string;
   ip: string;
+  ap_name: string | null;
   site: string;
+
   status: DeviceStatusRaw;
   last_seen: string | null;
   latency_ms: number | null;
