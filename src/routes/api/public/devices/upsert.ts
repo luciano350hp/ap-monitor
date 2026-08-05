@@ -1,14 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
-const PayloadSchema = z.object({
-  ip: z.string().min(1).max(64),
-  site: z.string().min(1).max(200),
-  status: z.enum(["up", "down", "degraded", "unknown"]).default("unknown"),
-  last_seen: z.string().datetime({ offset: true }).optional().nullable(),
-  latency_ms: z.number().int().min(0).max(600000).optional().nullable(),
-  notes: z.string().max(1000).optional().nullable(),
-});
+const PayloadSchema = z
+  .object({
+    ip: z.string().min(1).max(64).optional(),
+    ap_name: z.string().min(1).max(200).optional(),
+    name: z.string().min(1).max(200).optional(),
+    site: z.string().min(1).max(200),
+    status: z.enum(["up", "down", "degraded", "unknown"]).default("unknown"),
+    last_seen: z.string().datetime({ offset: true }).optional().nullable(),
+    latency_ms: z.number().int().min(0).max(600000).optional().nullable(),
+    notes: z.string().max(1000).optional().nullable(),
+  })
+  .refine((v) => Boolean(v.ip || v.ap_name || v.name), {
+    message: "Se requiere 'ip' o 'ap_name'.",
+  })
+  .refine((v) => !v.last_seen || new Date(v.last_seen).getTime() <= Date.now() + 60_000, {
+    message: "'last_seen' no puede estar en el futuro.",
+  });
+
 
 const BodySchema = z.union([PayloadSchema, z.array(PayloadSchema).max(500)]);
 
