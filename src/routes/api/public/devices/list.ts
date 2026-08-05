@@ -29,7 +29,7 @@ export const Route = createFileRoute("/api/public/devices/list")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         let query = supabaseAdmin
           .from("devices")
-          .select("id, ip, site, status, last_seen, latency_ms, notes, updated_at, created_at")
+          .select("id, ip, ap_name, site, status, last_seen, latency_ms, notes, updated_at, created_at")
           .order("updated_at", { ascending: false })
           .limit(limit);
 

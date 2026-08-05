@@ -53,11 +53,20 @@ export const Route = createFileRoute("/api/public/devices/upsert")({
           return json({ error: "validation_failed", detail: parsed.error.flatten() }, 400);
         }
 
-        const rows = (Array.isArray(parsed.data) ? parsed.data : [parsed.data]).map((r) => ({
-          ...r,
-          last_seen: r.last_seen ?? new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }));
+        const rows = (Array.isArray(parsed.data) ? parsed.data : [parsed.data]).map((r) => {
+          const apName = r.ap_name ?? r.name ?? null;
+          return {
+            ip: (r.ip ?? apName)!,
+            ap_name: apName,
+            site: r.site,
+            status: r.status,
+            latency_ms: r.latency_ms ?? null,
+            notes: r.notes ?? null,
+            last_seen: r.last_seen ?? new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+        });
+
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data, error } = await supabaseAdmin
